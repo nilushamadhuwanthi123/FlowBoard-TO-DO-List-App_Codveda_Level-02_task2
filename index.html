@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FlowBoard — Productivity Dashboard</title>
+<meta name="description" content="FlowBoard: a professional task management and productivity dashboard." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<div class="app-shell">
+
+  <!-- ============================= SIDEBAR ============================= -->
+  <aside class="sidebar" id="sidebar" aria-label="Navigation">
+    <div class="sidebar__brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </span>
+      <span class="brand-name">FlowBoard</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Task filters">
+      <p class="sidebar__label">Workspace</p>
+      <ul class="filter-list" id="filter-list" role="list">
+        <li><button class="filter-item is-active" data-filter="all" type="button"><span class="filter-icon" aria-hidden="true">▤</span>All tasks<span class="filter-count" id="count-all">0</span></button></li>
+        <li><button class="filter-item" data-filter="today" type="button"><span class="filter-icon" aria-hidden="true">☀</span>Today<span class="filter-count" id="count-today">0</span></button></li>
+        <li><button class="filter-item" data-filter="active" type="button"><span class="filter-icon" aria-hidden="true">◔</span>Active<span class="filter-count" id="count-active">0</span></button></li>
+        <li><button class="filter-item" data-filter="completed" type="button"><span class="filter-icon" aria-hidden="true">✓</span>Completed<span class="filter-count" id="count-completed">0</span></button></li>
+        <li><button class="filter-item" data-filter="high" type="button"><span class="filter-icon" aria-hidden="true">‼</span>High priority<span class="filter-count" id="count-high">0</span></button></li>
+        <li><button class="filter-item" data-filter="overdue" type="button"><span class="filter-icon" aria-hidden="true">⏰</span>Overdue<span class="filter-count" id="count-overdue">0</span></button></li>
+        <li><button class="filter-item" data-filter="pinned" type="button"><span class="filter-icon" aria-hidden="true">📌</span>Pinned<span class="filter-count" id="count-pinned">0</span></button></li>
+        <li><button class="filter-item" data-filter="archived" type="button"><span class="filter-icon" aria-hidden="true">🗄</span>Archive<span class="filter-count" id="count-archived">0</span></button></li>
+      </ul>
+
+      <p class="sidebar__label sidebar__label--spaced">Categories</p>
+      <ul class="category-list" id="category-list" role="list"></ul>
+      <button class="add-category-btn" id="add-category-btn" type="button">
+        <span aria-hidden="true">+</span> New category
+      </button>
+    </nav>
+
+    <div class="sidebar__footer">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">
+        <span class="theme-toggle__track">
+          <span class="theme-toggle__thumb">
+            <svg class="icon-sun" width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg class="icon-moon" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+        <span class="theme-toggle__label">Dark mode</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============================= MAIN ============================= -->
+  <div class="app-main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="icon-btn sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="topbar__greeting">
+        <h1 id="greeting-text">Hello</h1>
+        <p id="greeting-date"></p>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="btn btn--ghost" id="focus-mode-btn" type="button">
+          <span aria-hidden="true">◎</span> Focus mode
+        </button>
+        <button class="btn btn--primary" id="open-add-task" type="button">
+          <span aria-hidden="true">+</span> Add task <kbd>N</kbd>
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content">
+
+      <!-- ===================== DASHBOARD ===================== -->
+      <section class="dashboard" aria-label="Productivity dashboard">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <p class="stat-card__label">Total tasks</p>
+            <p class="stat-card__value" id="stat-total">0</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-card__label">Active</p>
+            <p class="stat-card__value" id="stat-active">0</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-card__label">Completed</p>
+            <p class="stat-card__value" id="stat-completed">0</p>
+          </div>
+          <div class="stat-card stat-card--warning">
+            <p class="stat-card__label">High priority</p>
+            <p class="stat-card__value" id="stat-high">0</p>
+          </div>
+          <div class="stat-card stat-card--danger">
+            <p class="stat-card__label">Overdue</p>
+            <p class="stat-card__value" id="stat-overdue">0</p>
+          </div>
+        </div>
+
+        <div class="dashboard__panels">
+          <div class="panel panel--ring">
+            <div class="progress-ring-wrap">
+              <svg class="progress-ring" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="ring-title">
+                <title id="ring-title">Completion progress</title>
+                <circle class="progress-ring__bg" cx="64" cy="64" r="56"></circle>
+                <circle class="progress-ring__value" id="progress-ring-circle" cx="64" cy="64" r="56"></circle>
+              </svg>
+              <div class="progress-ring__center">
+                <span id="progress-ring-pct">0%</span>
+                <small>done</small>
+              </div>
+            </div>
+            <div class="panel__meta">
+              <p class="panel__title">Productivity</p>
+              <p class="panel__sub" id="productivity-summary">Add a task to get started.</p>
+            </div>
+          </div>
+
+          <div class="panel panel--streak">
+            <div class="streak-flame" aria-hidden="true">🔥</div>
+            <div class="panel__meta">
+              <p class="panel__value" id="streak-count">0</p>
+              <p class="panel__title">Day streak</p>
+              <p class="panel__sub">Complete a task today to keep it alive.</p>
+            </div>
+          </div>
+
+          <div class="panel panel--deadline">
+            <div class="panel__meta panel__meta--full">
+              <p class="panel__title">Next deadline</p>
+              <p class="panel__value panel__value--mono" id="deadline-countdown">—</p>
+              <p class="panel__sub" id="deadline-name">No upcoming due dates</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TOOLBAR ===================== -->
+      <section class="toolbar" aria-label="Search, filter and sort tasks">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="search" id="search-input" placeholder="Search tasks, notes, subtasks…" aria-label="Search tasks" />
+        </div>
+
+        <label class="select-wrap">
+          <span class="visually-hidden">Sort tasks</span>
+          <select id="sort-select" aria-label="Sort tasks">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="priority">Priority</option>
+            <option value="dueDate">Due date</option>
+            <option value="alphabetical">Alphabetical</option>
+          </select>
+        </label>
+
+        <div class="view-current" id="view-current-label">All tasks</div>
+      </section>
+
+      <!-- ===================== TASK LIST ===================== -->
+      <section class="task-section" aria-label="Task list">
+        <div id="bulk-actions" class="bulk-actions is-hidden">
+          <span id="bulk-actions-count">0 tasks</span>
+          <button type="button" class="text-btn" id="clear-completed-btn">Clear completed</button>
+          <button type="button" class="text-btn text-btn--danger" id="clear-all-btn">Clear all</button>
+        </div>
+
+        <ul class="task-list" id="task-list" role="list" aria-live="polite"></ul>
+
+        <div class="empty-state is-hidden" id="empty-state">
+          <div class="empty-state__art" aria-hidden="true">🗂️</div>
+          <h2 id="empty-state-title">No tasks yet</h2>
+          <p id="empty-state-body">Add your first task and start building momentum.</p>
+          <button class="btn btn--primary" id="empty-state-cta" type="button">+ Add a task</button>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ============================= TASK MODAL ============================= -->
+<div class="modal-overlay is-hidden" id="task-modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+    <div class="modal__header">
+      <h2 id="task-modal-title">Add task</h2>
+      <button class="icon-btn" id="task-modal-close" type="button" aria-label="Close dialog">✕</button>
+    </div>
+
+    <form id="task-form" class="modal__body" novalidate>
+      <input type="hidden" id="task-id-input" />
+
+      <div class="field">
+        <label for="task-title-input">Title <span class="req">*</span></label>
+        <input type="text" id="task-title-input" maxlength="120" placeholder="e.g. Ship the Q3 report" autocomplete="off" required />
+        <p class="field-error" id="task-title-error" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="task-desc-input">Description</label>
+        <textarea id="task-desc-input" rows="3" maxlength="500" placeholder="Optional details…"></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="task-priority-input">Priority</label>
+          <select id="task-priority-input">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="task-category-input">Category</label>
+          <select id="task-category-input"></select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="task-due-input">Due date</label>
+          <input type="date" id="task-due-input" />
+          <p class="field-error" id="task-due-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="task-reminder-input">Reminder</label>
+          <input type="datetime-local" id="task-reminder-input" />
+          <p class="field-error" id="task-reminder-error" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Subtasks</label>
+        <ul class="subtask-editor" id="subtask-editor-list"></ul>
+        <div class="subtask-add-row">
+          <input type="text" id="subtask-input" placeholder="Add a subtask and press Enter" autocomplete="off" />
+          <button type="button" class="btn btn--ghost btn--small" id="subtask-add-btn">Add</button>
+        </div>
+      </div>
+
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" id="task-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn--primary" id="task-submit-btn">Add task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================= TASK DETAILS MODAL ============================= -->
+<div class="modal-overlay is-hidden" id="details-modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="details-modal-title">
+    <div class="modal__header">
+      <h2 id="details-modal-title">Task details</h2>
+      <button class="icon-btn" id="details-modal-close" type="button" aria-label="Close dialog">✕</button>
+    </div>
+    <div class="modal__body" id="details-modal-body"></div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" id="details-edit-btn">Edit</button>
+      <button type="button" class="btn btn--primary" id="details-close-btn">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= CONFIRM MODAL ============================= -->
+<div class="modal-overlay is-hidden" id="confirm-modal-overlay">
+  <div class="modal modal--small" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+    <div class="modal__header">
+      <h2 id="confirm-modal-title">Are you sure?</h2>
+    </div>
+    <div class="modal__body">
+      <p id="confirm-modal-body">This action cannot be undone.</p>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" id="confirm-cancel-btn">Cancel</button>
+      <button type="button" class="btn btn--danger" id="confirm-ok-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= CATEGORY MODAL ============================= -->
+<div class="modal-overlay is-hidden" id="category-modal-overlay">
+  <div class="modal modal--small" role="dialog" aria-modal="true" aria-labelledby="category-modal-title">
+    <div class="modal__header">
+      <h2 id="category-modal-title">New category</h2>
+      <button class="icon-btn" id="category-modal-close" type="button" aria-label="Close dialog">✕</button>
+    </div>
+    <form class="modal__body" id="category-form">
+      <div class="field">
+        <label for="category-name-input">Name</label>
+        <input type="text" id="category-name-input" maxlength="30" placeholder="e.g. Finance" required />
+      </div>
+      <div class="field">
+        <label for="category-color-input">Color</label>
+        <input type="color" id="category-color-input" value="#6366F1" />
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" id="category-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn--primary">Create category</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================= FOCUS MODE ============================= -->
+<div class="focus-overlay is-hidden" id="focus-overlay">
+  <button class="icon-btn focus-overlay__close" id="focus-exit-btn" type="button" aria-label="Exit focus mode">✕</button>
+  <p class="focus-overlay__eyebrow">Focus mode</p>
+  <h2 class="focus-overlay__task" id="focus-task-title">You're all caught up</h2>
+  <p class="focus-overlay__meta" id="focus-task-meta"></p>
+  <div class="focus-overlay__actions">
+    <button class="btn btn--primary btn--large" id="focus-complete-btn" type="button">Mark complete</button>
+    <button class="btn btn--ghost btn--large" id="focus-skip-btn" type="button">Next task</button>
+  </div>
+  <p class="focus-overlay__hint">Press <kbd>Esc</kbd> to exit</p>
+</div>
+
+<!-- ============================= TOASTS ============================= -->
+<div class="toast-container" id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
