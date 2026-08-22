@@ -3,6 +3,7 @@
 A production-quality, portfolio-worthy To-Do / Productivity web application built with **plain HTML5, CSS3 and vanilla JavaScript (ES6+)** — no frameworks, no build step, no dependencies.
 
 ![FlowBoard](https://img.shields.io/badge/HTML5-CSS3-JavaScript-blue)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-flowboard--todo-16A34A?style=for-the-badge&logo=vercel&logoColor=white)](https://flowboard-todo-nilusha.vercel.app)
 
 ## ✨ Features
 
